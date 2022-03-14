@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: challenge
+  namespace: challenge
+  labels:
+    app: challenge
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 33%
+  selector:
+    matchLabels:
+      app: challenge
+  template:
+    metadata:
+      namespace: challenge
+      labels:
+        app: challenge
+    spec:
+      containers:
+        - name: challenge
+          image: gcr.io/metafinanz-project/nestjs-dummy:latest
+          ports:
+            - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: challenge
+  namespace: challenge
+  labels: 
+    app: challenge
+spec:
+  type: ClusterIP
+  ports:
+    - name: 3000-tcp
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: challenge
