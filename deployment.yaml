@@ -51,3 +51,14 @@ spec:
       targetPort: 3000
   selector:
     app: challenge
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+spec:
+  defaultBackend:
+    service:
+      name: web
+      port:
+        number: 3000
